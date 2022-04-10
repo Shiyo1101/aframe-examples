@@ -3,31 +3,36 @@
 <head>
   <meta charset="utf-8">
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+  <script src="https://rawgit.com/fernandojsg/aframe-teleport-controls/master/dist/aframe-teleport-controls.min.js"></script>
 </head>
 
 <script type="module">
-AFRAME.registerComponent('vr-controller', {
+AFRAME.registerComponent('collider-check', {
     dependencies: ['raycaster'],
     init: function () {
-      const text = document.getElementById("room_sky");
-      text.setAttribute("color", "#a9a9a9");
+      const text = document.getElementById("my_text");
+      const sky = document.getElementById("room_sky")
 
-      this.el.addEventListener("triggerdown", function(e) {
-	    text.setAttribute("value", "We1lc0mE t0 GANTZ Ro0M");
-    });
+      this.el.addEventListener('raycaster-intersection', function() {
+	      text.setAttribute("value", "We1lc0mE t0 GANTZ Ro0M");
+        sky.setAttribute("color", "#a9a9a9");
+      });
     }
 });
 </script>
 
   <body>
-    <a-entity laser-controls="hand: right" raycaster="objects: .collidable; far: 5" vr-controller></a-entity>
-
     <a-scene id="scene">
       <a-sky id="room_sky"></a-sky>
       <a-plane position="0 0 -5" rotation="-90 0 0" width="10" height="10" color="#8b4513"></a-plane>
       <a-sphere position="0 2 -5" radius="2" color="black" class="collidable"></a-sphere>
       <a-text id="my_text" position="-1.3 2 -3"></a-text>
     </a-scene>
+
+    <a-entity id="cameraRig">
+      <a-entity id="head" camera position="0 1.7 0" mc-controls x-wasd-controls-mode2 look-controls x-drone-controls-mode2 raycaster="objects: .collidable; far: 0.5;" collider-check></a-entity>
+      <a-entity oculus-touch-controls="hand:left" teleport-controls="button:trigger; collisionEntities:.collidable; cameraRig:#cameraRig; teleportOrigin:#head;"></a-entity>
+      <a-entity oculus-touch-controls="hand:right" teleport-controls="button:trigger; collisionEntities:.collidable; cameraRig:#cameraRig; teleportOrigin:#head;"></a-entity>
+    </a-entity>
   </body>
 </html>
